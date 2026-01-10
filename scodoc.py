@@ -14,7 +14,7 @@ TOKEN = os.environ["TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 USER = os.environ["USER_ESIR"]
 PASS = os.environ["PASS_ESIR"]
-URL_TARGET = "https://scodoc-notes.esir.univ-rennes1.fr/scodoc/Scolarite/Notes/notes_view"
+URL_TARGET = "https://scodoc-notes.esir.univ-rennes1.fr/"
 
 def send_telegram(message):
     try:
