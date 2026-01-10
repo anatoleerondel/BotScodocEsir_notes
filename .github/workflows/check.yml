@@ -1,0 +1,41 @@
+name: Check Notes ESIR
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # TOUTES LES 15 MINUTES
+  workflow_dispatch: # Permet de lancer manuellement pour tester
+
+permissions:
+  contents: write # Autorise le bot à écrire dans last_count.txt
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Installer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Installer dépendances
+        run: pip install -r requirements.txt
+
+      - name: Lancer le script
+        env: # C'est ici qu'on injecte les secrets dans le script
+          TOKEN: ${{ secrets.TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          USER_ESIR: ${{ secrets.USER_ESIR }}
+          PASS_ESIR: ${{ secrets.PASS_ESIR }}
+        run: python scodoc.py
+
+      - name: Sauvegarder si changement
+        run: |
+          git config --global user.name 'Bot ESIR'
+          git config --global user.email 'bot@noreply.github.com'
+          git add last_count.txt
+          # On ne commit que si le fichier a changé
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update notes count" && git push)
